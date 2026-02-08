@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>time</title>
+<title>Rajveer Birthday</title>
 
 <style>
 *{
@@ -13,13 +13,14 @@
 }
 
 body{
-    font-family:Segoe UI, Tahoma, Geneva, Verdana, sans-serif;
+    font-family:Segoe UI, sans-serif;
     background:linear-gradient(135deg,#667eea,#764ba2);
     min-height:100vh;
     display:flex;
     justify-content:center;
     align-items:center;
     overflow:hidden;
+    color:white;
 }
 
 /* particles */
@@ -27,7 +28,7 @@ body{
     position:absolute;
     width:8px;
     height:8px;
-    background:rgba(255,255,255,.5);
+    background:rgba(255,255,255,0.6);
     border-radius:50%;
     animation:float 12s infinite;
 }
@@ -38,108 +39,88 @@ body{
 }
 
 .container{
-    background:rgba(255,255,255,.12);
+    background:rgba(255,255,255,0.15);
     backdrop-filter:blur(10px);
     padding:50px 40px;
     border-radius:25px;
     text-align:center;
     width:90%;
     max-width:600px;
-    color:#fff;
 }
 
-/* countdown */
-.timer-display{
-    font-size:70px;
+.timer{
+    font-size:60px;
     font-family:monospace;
-    margin:20px 0;
+    margin-top:20px;
 }
 
-/* birthday */
-.birthday-container{
+.birthday{
     display:none;
 }
 
-.birthday-container.active{
+.birthday.active{
     display:block;
-    animation:fadeIn 1s ease;
+    animation:fade 1s ease;
 }
 
-@keyframes fadeIn{
-    from{opacity:0;transform:scale(.8)}
+@keyframes fade{
+    from{opacity:0;transform:scale(0.8)}
     to{opacity:1;transform:scale(1)}
 }
 
-.birthday-title{
+.title{
     font-size:55px;
     background:linear-gradient(45deg,#ff6b6b,#ffd93d,#6bcf7f,#4d9fff);
-    background-size:300% 300%;
     -webkit-background-clip:text;
     -webkit-text-fill-color:transparent;
-    animation:gradient 3s infinite;
-}
-@keyframes gradient{
-    0%{background-position:0%}
-    50%{background-position:100%}
-    100%{background-position:0%}
 }
 
-.birthday-name{
+.name{
     font-size:70px;
     margin:25px 0;
     color:#ffd93d;
     animation:pulse 2s infinite;
 }
+
 @keyframes pulse{
     0%,100%{transform:scale(1)}
     50%{transform:scale(1.05)}
 }
 
-/* password area */
-.pass-box{
-    margin-top:30px;
-}
 .pass-box input{
     padding:15px;
-    font-size:18px;
     width:240px;
-    border-radius:10px;
     border:none;
-    outline:none;
+    border-radius:10px;
+    font-size:18px;
     text-align:center;
 }
-.pass-box button{
-    margin-top:15px;
-    padding:12px 30px;
-    font-size:18px;
+
+button{
+    margin:10px;
+    padding:12px 25px;
     border:none;
     border-radius:10px;
+    font-size:16px;
     cursor:pointer;
-    background:#ffd93d;
-    font-weight:bold;
-}
-.error{
-    color:#ff6b6b;
-    margin-top:10px;
-    display:none;
 }
 
-/* confetti */
-.confetti{
-    position:absolute;
-    width:10px;
-    height:10px;
-    animation:fall 4s linear infinite;
-}
-@keyframes fall{
-    from{transform:translateY(-100vh) rotate(0deg)}
-    to{transform:translateY(100vh) rotate(720deg)}
+.unlock{background:#ffd93d;font-weight:bold;}
+.play{background:#6bcf7f;}
+.stop{background:#ff6b6b;color:white;}
+.close{background:#4d9fff;color:white;}
+
+.error{
+    color:#ff6b6b;
+    display:none;
+    margin-top:10px;
 }
 </style>
 </head>
 
 <body>
 
+<!-- particles -->
 <script>
 for(let i=0;i<30;i++){
     let p=document.createElement("div");
@@ -153,23 +134,35 @@ for(let i=0;i<30;i++){
 <!-- countdown -->
 <div class="container" id="timerBox">
     <h2>Time Until Rajveer's Birthday</h2>
-    <div class="timer-display" id="countdown">00:00:00</div>
+    <div class="timer" id="countdown">00:00:00</div>
 </div>
 
-<!-- birthday -->
-<div class="container birthday-container" id="birthdayBox">
-    <div class="birthday-title">🎉 HAPPY BIRTHDAY 🎉</div>
-    <div class="birthday-name">RAJVEER</div>
+<!-- birthday screen -->
+<div class="container birthday" id="birthdayBox">
+    <div class="title">🎉 HAPPY BIRTHDAY 🎉</div>
+    <div class="name">RAJVEER</div>
 
     <div class="pass-box">
         <input type="password" id="pass" placeholder="enter password">
         <br>
-        <button onclick="checkPass()">Submit</button>
+        <button class="unlock" onclick="checkPass()">Unlock</button>
+
+        <div id="controls" style="display:none;">
+            <button class="play" onclick="playSong()">▶ Play</button>
+            <button class="stop" onclick="stopSong()">⏸ Stop</button>
+            <button class="close" onclick="closePlayer()">❌ Close</button>
+        </div>
+
         <div class="error" id="err">❌ Wrong password</div>
     </div>
 </div>
 
+<!-- AUDIO FILE -->
+<audio id="birthdayAudio" src="happy_birthday.wav"></audio>
+
 <script>
+const audio = document.getElementById("birthdayAudio");
+
 function getIST(){
     let now=new Date();
     return new Date(now.getTime()+now.getTimezoneOffset()*60000+19800000);
@@ -177,15 +170,11 @@ function getIST(){
 
 function update(){
     let now=getIST();
-    let isBirthday=now.getMonth()==1 && now.getDate()==8;
+    let isBirthday = now.getMonth()==1 && now.getDate()==8;
 
     if(isBirthday){
         timerBox.style.display="none";
         birthdayBox.classList.add("active");
-        if(!window.done){
-            confetti();
-            window.done=true;
-        }
     }else{
         let target=new Date(now.getFullYear(),1,8);
         if(now>target) target=new Date(now.getFullYear()+1,1,8);
@@ -193,27 +182,15 @@ function update(){
         let h=Math.floor(d/3600000);
         let m=Math.floor(d%3600000/60000);
         let s=Math.floor(d%60000/1000);
-        countdown.textContent=
+        countdown.textContent =
         `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
     }
 }
 
-function confetti(){
-    let colors=["#ff6b6b","#ffd93d","#6bcf7f","#4d9fff"];
-    for(let i=0;i<60;i++){
-        let c=document.createElement("div");
-        c.className="confetti";
-        c.style.left=Math.random()*100+"%";
-        c.style.background=colors[Math.floor(Math.random()*colors.length)];
-        c.style.animationDuration=2+Math.random()*3+"s";
-        document.body.appendChild(c);
-    }
-}
-
 function checkPass(){
-    let v=pass.value.toLowerCase();
-    if(v==="ok"){
+    if(pass.value.toLowerCase()==="ok"){
         err.style.display="none";
+        controls.style.display="block";
         playSong();
         alert("🎂 Happy Birthday Rajveer! 🎉");
     }else{
@@ -222,19 +199,17 @@ function checkPass(){
 }
 
 function playSong(){
-    let ctx=new (window.AudioContext||webkitAudioContext)();
-    let notes=[262,262,294,262,349,330];
-    let t=ctx.currentTime;
-    notes.forEach(n=>{
-        let o=ctx.createOscillator();
-        let g=ctx.createGain();
-        o.connect(g); g.connect(ctx.destination);
-        o.frequency.value=n;
-        g.gain.value=0.3;
-        o.start(t);
-        o.stop(t+0.4);
-        t+=0.4;
-    });
+    audio.play();
+}
+
+function stopSong(){
+    audio.pause();
+    audio.currentTime=0;
+}
+
+function closePlayer(){
+    stopSong();
+    controls.style.display="none";
 }
 
 update();
