@@ -23,7 +23,7 @@ body{
     color:white;
 }
 
-/* particles */
+/* floating particles */
 .particle{
     position:absolute;
     width:8px;
@@ -48,21 +48,21 @@ body{
     max-width:600px;
 }
 
+/* countdown */
 .timer{
     font-size:60px;
     font-family:monospace;
     margin-top:20px;
 }
 
+/* birthday screen */
 .birthday{
     display:none;
 }
-
 .birthday.active{
     display:block;
     animation:fade 1s ease;
 }
-
 @keyframes fade{
     from{opacity:0;transform:scale(0.8)}
     to{opacity:1;transform:scale(1)}
@@ -81,12 +81,12 @@ body{
     color:#ffd93d;
     animation:pulse 2s infinite;
 }
-
 @keyframes pulse{
     0%,100%{transform:scale(1)}
     50%{transform:scale(1.05)}
 }
 
+/* password & buttons */
 .pass-box input{
     padding:15px;
     width:240px;
@@ -97,7 +97,7 @@ body{
 }
 
 button{
-    margin:10px;
+    margin:8px;
     padding:12px 25px;
     border:none;
     border-radius:10px;
@@ -120,7 +120,7 @@ button{
 
 <body>
 
-<!-- particles -->
+<!-- background particles -->
 <script>
 for(let i=0;i<30;i++){
     let p=document.createElement("div");
@@ -131,13 +131,13 @@ for(let i=0;i<30;i++){
 }
 </script>
 
-<!-- countdown -->
+<!-- countdown container -->
 <div class="container" id="timerBox">
     <h2>Time Until Rajveer's Birthday</h2>
     <div class="timer" id="countdown">00:00:00</div>
 </div>
 
-<!-- birthday screen -->
+<!-- birthday container -->
 <div class="container birthday" id="birthdayBox">
     <div class="title">🎉 HAPPY BIRTHDAY 🎉</div>
     <div class="name">RAJVEER</div>
@@ -157,8 +157,11 @@ for(let i=0;i<30;i++){
     </div>
 </div>
 
-<!-- AUDIO FILE -->
-<audio id="birthdayAudio" src="happy_birthday.wav"></audio>
+<!-- AUDIO (OGG FILE) -->
+<audio id="birthdayAudio">
+    <source src="happy_birthday.wav.ogg" type="audio/ogg">
+    Your browser does not support audio.
+</audio>
 
 <script>
 const audio = document.getElementById("birthdayAudio");
